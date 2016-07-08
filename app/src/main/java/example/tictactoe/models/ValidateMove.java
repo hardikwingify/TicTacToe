@@ -16,7 +16,7 @@ public abstract class ValidateMove {
         if (isGameWon) {
             return isGameWon;
         }
-        isGameWon = arrayOfMoves[3] == selected // 3-in-the-column
+        isGameWon = arrayOfMoves[3] == selected
                 && arrayOfMoves[4] == selected
                 && arrayOfMoves[5] == selected;
         if (isGameWon) {
