@@ -6,41 +6,28 @@ import java.util.ArrayList;
  * Created by hardik on 18/06/16.
  */
 public class Cross extends ValidateMove {
-    ArrayList<Integer> listOfMoves = new ArrayList<>();
-    int arrayOfMoves[];
-    final int selected = 1;
+   private  ArrayList<Point> listOfMoves = new ArrayList<>();
 
     public Cross() {
         arrayOfMoves = new int[9];
     }
 
-    public void addMoveBox(int blockNumber) {
-        listOfMoves.add(blockNumber);
+
+    public boolean addMoveBox(int blockNumber, float startX, float startY, float endX, float endY) {
+        listOfMoves.add(new Point(startX, startY, endX, endY, blockNumber));
         arrayOfMoves[blockNumber] = 1;
-        isTicTacToeCreated();
+        return isTicTacToeCreated();
+    }
+
+    public ArrayList<Point> getMoves() {
+        return listOfMoves;
     }
 
     public void clearMoves() {
         listOfMoves.clear();
+        for (int i = 0; i < arrayOfMoves.length; i++) {
+            arrayOfMoves[i] = -1;
+        }
     }
 
-    @Override
-    boolean isTicTacToeCreated() {
-        boolean isGameWon = arrayOfMoves[0] == selected
-                && arrayOfMoves[1] == selected
-                && arrayOfMoves[2] == selected
-                ||
-                arrayOfMoves[0] == selected // 3-in-the-column
-                        && arrayOfMoves[1] == selected
-                        && arrayOfMoves[2] == selected
-                ||
-                arrayOfMoves[0] == selected
-                        && arrayOfMoves[1] == selected
-                        && arrayOfMoves[2] == selected
-                ||
-                arrayOfMoves[2] == selected
-                        && arrayOfMoves[1] == selected
-                        && arrayOfMoves[0] == selected;
-        return isGameWon;
-    }
 }
