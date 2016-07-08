@@ -19,6 +19,7 @@ import example.tictactoe.R;
 import example.tictactoe.models.Circle;
 import example.tictactoe.models.Cross;
 import example.tictactoe.models.Point;
+import example.tictactoe.models.ValidateMove;
 
 /**
  * Created by hardik on 18/06/16.
@@ -28,7 +29,7 @@ public class CanvasBoard extends SurfaceView implements SurfaceHolder.Callback, 
 
     //CanvasThread canvasThread;
     int boardWidth, boardHeight;
-    Paint boardPaint, crossPaint, circlePaint;
+    Paint boardPaint, crossPaint, circlePaint , winningLinePaint;
     float mX, mY;
     int arrayOfMoves[];
     int halfWidth;
@@ -48,9 +49,9 @@ public class CanvasBoard extends SurfaceView implements SurfaceHolder.Callback, 
     Circle circle;
     int EMPTY_CELL = -1;
     Bitmap crossBitmap, circleBitmap;
-    boolean isGameWon;
+    int isGameWon;
     int extremeLeft;
-
+    Point winningLinePoint;
 
     public CanvasBoard(Context context, int boardWidth, int boardHeight) {
         super(context);
@@ -101,6 +102,9 @@ public class CanvasBoard extends SurfaceView implements SurfaceHolder.Callback, 
         for (Point cellNumber : cross.getMoves()) {
             canvas.drawLine(cellNumber.getStartX(), cellNumber.getStartY(), cellNumber.getEndX(), cellNumber.getEndY(), crossPaint);
             canvas.drawLine(cellNumber.getEndX(), cellNumber.getStartY(), cellNumber.getStartX(), cellNumber.getEndY(), crossPaint);
+        }
+        if (isGameWon != -1 && isGameWon != 0) {
+            canvas.drawLine(winningLinePoint.getStartX(), winningLinePoint.getStartY(), winningLinePoint.getEndX(), winningLinePoint.getEndY(), winningLinePaint);
         }
         //canvas.drawColor(Color.WHITE);
     }
@@ -162,12 +166,42 @@ public class CanvasBoard extends SurfaceView implements SurfaceHolder.Callback, 
         } else {
             isGameWon = circle.addMoveBox(blockNumber, startX, startY, endX, endY);
         }
-        if (isGameWon) {
+        if (isGameWon != -1) {
             Toast.makeText(context, "Game won ", Toast.LENGTH_LONG).show();
+            getWinningLinePointFromResult(isGameWon);
         }
         isCrossSelected = !isCrossSelected;
         getHolder().unlockCanvasAndPost(canvas);
         invalidate();
+    }
+
+    private void getWinningLinePointFromResult(int point) {
+        switch (point) {
+            case ValidateMove.HORIZONTAL_FIRST_LINE:
+                winningLinePoint = new Point(40, (boardHeight / 3) / 2, boardWidth - 40, (boardHeight / 3) / 2, -1);
+                break;
+            case ValidateMove.HORIZONTAL_SECOND_LINE:
+                winningLinePoint = new Point(40, (boardHeight / 3) + ((boardHeight) / 3) / 2, boardWidth - 40, (boardHeight / 3) + ((boardHeight) / 3) / 2, -1);
+                break;
+            case ValidateMove.HORIZONTAL_THIRD_LINE:
+                winningLinePoint = new Point(40, 2 * (boardHeight / 3) + ((boardHeight) / 3) / 2, boardWidth - 40, 2 * (boardHeight / 3) + ((boardHeight) / 3) / 2, -1);
+                break;
+            case ValidateMove.VERTICAL_FIRST_LINE:
+                winningLinePoint = new Point((boardWidth / 3) / 2, 40, (boardWidth / 3) / 2, boardHeight - 40, -1);
+                break;
+            case ValidateMove.VERTICAL_SECOND_LINE:
+                winningLinePoint = new Point((boardWidth / 3) + (boardWidth / 3) / 2, 40, (boardWidth / 3) + (boardWidth / 3) / 2, boardHeight - 40, -1);
+                break;
+            case ValidateMove.VERTICAL_THIRD_LINE:
+                winningLinePoint = new Point(2 * (boardWidth / 3) + (boardWidth / 3) / 2, 40, 2 * (boardWidth / 3) + (boardWidth / 3) / 2, boardHeight - 40, -1);
+                break;
+            case ValidateMove.DIAGONAL_FIRST_LINE:
+                winningLinePoint = new Point(40, 40, boardWidth - 40, boardHeight - 40, -1);
+                break;
+            case ValidateMove.DIAGONAL_SECOND_LINE:
+                winningLinePoint = new Point(40, boardHeight - 40, boardWidth - 40, 40, -1);
+                break;
+        }
     }
 
 
@@ -184,6 +218,11 @@ public class CanvasBoard extends SurfaceView implements SurfaceHolder.Callback, 
         circlePaint.setColor(Color.BLACK);
         circlePaint.setStrokeWidth(10f);
         circlePaint.setStyle(Paint.Style.STROKE);
+
+        winningLinePaint = new Paint();
+        winningLinePaint.setColor(Color.RED);
+        winningLinePaint.setStrokeWidth(20f);
+        winningLinePaint.setStyle(Paint.Style.FILL_AND_STROKE);
 
 
         extremeLeft = halfWidth - 400;
@@ -211,6 +250,7 @@ public class CanvasBoard extends SurfaceView implements SurfaceHolder.Callback, 
         cross.clearMoves();
         invalidate();
         arrayOfMoves = new int[]{EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL};
+        isGameWon = -1;
     }
 
 

@@ -13,7 +13,7 @@ public class Cross extends ValidateMove {
     }
 
 
-    public boolean addMoveBox(int blockNumber, float startX, float startY, float endX, float endY) {
+    public int addMoveBox(int blockNumber, float startX, float startY, float endX, float endY) {
         listOfMoves.add(new Point(startX, startY, endX, endY, blockNumber));
         arrayOfMoves[blockNumber] = 1;
         return isTicTacToeCreated();
