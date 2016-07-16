@@ -1,12 +1,14 @@
 package example.tictactoe;
 
-import android.support.v4.app.Fragment;
+import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import example.tictactoe.Utils.Utils;
 import example.tictactoe.fragments.TicTacToeFragment;
@@ -35,5 +37,7 @@ public class MainActivity extends AppCompatActivity {
                 gameFragment.resetGame();
             }
         });
+
+
     }
 }
