@@ -6,9 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.support.v4.content.res.ResourcesCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -29,7 +27,7 @@ public class CanvasBoard extends SurfaceView implements SurfaceHolder.Callback, 
 
     //CanvasThread canvasThread;
     int boardWidth, boardHeight;
-    Paint boardPaint, crossPaint, circlePaint , winningLinePaint;
+    Paint boardPaint, crossPaint, circlePaint, winningLinePaint;
     float mX, mY;
     int arrayOfMoves[];
     int halfWidth;
@@ -113,42 +111,39 @@ public class CanvasBoard extends SurfaceView implements SurfaceHolder.Callback, 
     public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                // Getting the X-Coordinate of the touched position
                 mX = event.getX();
-
-                // Getting the Y-Coordinate of the touched position
                 mY = event.getY();
 
                 if (mX < boardWidth / 3) { //Top left
-                    if (mY < boardHeight / 3) {
+                    if (mY < boardHeight / 3 && arrayOfMoves[0] != 1) {
                         makeMove(LEFT_TOP, 40, 40, boardWidth / 3 - 40, boardHeight / 3 - 40);
                         arrayOfMoves[0] = 1;
-                    } else if (mY > 2 * (boardHeight / 3)) {
-                        arrayOfMoves[6] = 1;
+                    } else if (mY > 2 * (boardHeight / 3) && arrayOfMoves[6] != 1) {
                         makeMove(LEFT_BOTTOM, 40, 2 * (boardHeight / 3) + 40, boardWidth / 3 - 40, boardHeight - 40);
-                    } else if (mY < 2 * (boardHeight / 3)) { // Middle
-                        arrayOfMoves[3] = 1;
+                        arrayOfMoves[6] = 1;
+                    } else if (mY < 2 * (boardHeight / 3) && arrayOfMoves[3] != 1) { // Middle
                         makeMove(LEFT_MIDDLE, 40, (boardHeight / 3) + 40, boardWidth / 3 - 40, 2 * (boardHeight / 3) - 40);
+                        arrayOfMoves[3] = 1;
                     }
                 } else if (mX < 2 * (boardWidth / 3)) {
-                    if (mY < boardHeight / 3) {
+                    if (mY < boardHeight / 3 && arrayOfMoves[1] != 1) {
                         makeMove(CENTER_TOP, boardWidth / 3 + 40, 40, 2 * (boardWidth / 3) - 40, boardHeight / 3 - 40);
                         arrayOfMoves[1] = 1;
-                    } else if (mY > 2 * (boardHeight / 3)) {
+                    } else if (mY > 2 * (boardHeight / 3) && arrayOfMoves[7] != 1) {
                         arrayOfMoves[7] = 1;
                         makeMove(CENTER_BOTTOM, boardWidth / 3 + 40, 2 * (boardHeight / 3) + 40, 2 * (boardWidth / 3) - 40, boardHeight - 40);
-                    } else if (mY < 2 * (boardHeight / 3)) {
+                    } else if (mY < 2 * (boardHeight / 3) && arrayOfMoves[4] != 1) {
                         arrayOfMoves[4] = 1;
                         makeMove(CENTER_MIDDLE, boardWidth / 3 + 40, (boardHeight / 3) + 40, 2 * (boardWidth / 3) - 40, 2 * (boardHeight / 3) - 40);
                     }
                 } else if (mX > 2 * (boardWidth / 3)) {
-                    if (mY < halfHeight - 150) {
+                    if (mY < halfHeight - 150 && arrayOfMoves[2] != 1) {
                         makeMove(RIGHT_TOP, 2 * (boardWidth / 3) + 40, 40, boardWidth - 40, boardHeight / 3 - 40);
                         arrayOfMoves[2] = 1;
-                    } else if (mY > 2 * (boardHeight / 3)) {
+                    } else if (mY > 2 * (boardHeight / 3) && arrayOfMoves[8] != 1) {
                         makeMove(RIGHT_BOTTOM, 2 * (boardWidth / 3) + 40, 2 * (boardHeight / 3) + 40, boardWidth - 40, boardHeight - 40);
                         arrayOfMoves[8] = 1;
-                    } else if (mY < 2 * (boardHeight / 3)) {
+                    } else if (mY < 2 * (boardHeight / 3) && arrayOfMoves[5] != 1) {
                         arrayOfMoves[5] = 1;
                         makeMove(RIGHT_MIDDLE, 2 * (boardWidth / 3) + 40, (boardHeight / 3) + 40, boardWidth - 40, 2 * (boardHeight / 3) - 40);
                     }
@@ -167,7 +162,8 @@ public class CanvasBoard extends SurfaceView implements SurfaceHolder.Callback, 
             isGameWon = circle.addMoveBox(blockNumber, startX, startY, endX, endY);
         }
         if (isGameWon != -1) {
-            Toast.makeText(context, "Game won ", Toast.LENGTH_LONG).show();
+            String playerName = isCrossSelected ? "Player 2" : " Player 1";
+            Toast.makeText(context, "Game won by " + playerName, Toast.LENGTH_LONG).show();
             getWinningLinePointFromResult(isGameWon);
         }
         isCrossSelected = !isCrossSelected;
@@ -211,12 +207,12 @@ public class CanvasBoard extends SurfaceView implements SurfaceHolder.Callback, 
         boardPaint.setStrokeWidth(15f);
 
         crossPaint = new Paint();
-        crossPaint.setColor(Color.BLACK);
-        crossPaint.setStrokeWidth(10f);
+        crossPaint.setColor(Color.YELLOW);
+        crossPaint.setStrokeWidth(15f);
 
         circlePaint = new Paint();
-        circlePaint.setColor(Color.BLACK);
-        circlePaint.setStrokeWidth(10f);
+        circlePaint.setColor(Color.GREEN);
+        circlePaint.setStrokeWidth(15f);
         circlePaint.setStyle(Paint.Style.STROKE);
 
         winningLinePaint = new Paint();
@@ -237,20 +233,13 @@ public class CanvasBoard extends SurfaceView implements SurfaceHolder.Callback, 
         }
     }
 
-    public void setBoardWidth(int boardWidth) {
-        this.boardWidth = boardWidth;
-    }
-
-    public void setBoardHeight(int boardHeight) {
-        this.boardHeight = boardHeight;
-    }
-
     public void resetGame() {
         circle.clearMoves();
         cross.clearMoves();
         invalidate();
         arrayOfMoves = new int[]{EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL, EMPTY_CELL};
         isGameWon = -1;
+        isCrossSelected = false;
     }
 
 
